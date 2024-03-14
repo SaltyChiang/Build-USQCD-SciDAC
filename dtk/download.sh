@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+ROOT=$HOME/scidac
+
+mkdir -p ${ROOT}
+pushd ${ROOT}
+
 git clone https://code.ihep.ac.cn/ihep-lqcd/qmp.git
 pushd qmp
 git checkout master
@@ -26,4 +31,9 @@ popd
 git clone https://code.ihep.ac.cn/ihep-lqcd/quda.git
 pushd quda
 git checkout hotfix/dtk-23.10
+popd
+
+wget https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.38.5/CPM.cmake -O CPM_0.38.5.cmake
+wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.bz2
+
 popd
