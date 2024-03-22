@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
-ROOT=$HOME/scidac
+TARGET=$1
+if [ -z $TARGET ]; then
+    echo "Error: Lack of parameters"
+    echo "Usage: download.sh TARGET"
+    exit 1
+fi
 
-mkdir -p ${ROOT}
-pushd ${ROOT}
+DIR=$( cd $( dirname ${BASH_SOURCE[0]} ) && pwd )
+SCIDAC=${DIR}/scidac
+
+mkdir -p ${SCIDAC}
+pushd ${SCIDAC}
 
 git clone https://github.com/usqcd-software/qmp.git
 pushd qmp
@@ -21,7 +29,7 @@ popd
 git clone https://github.com/JeffersonLab/qdp-jit.git --recursive
 pushd qdp-jit
 # git checkout devel
-git checkout 7ffb650ec
+git checkout 299b7937e
 git submodule update --recursive
 popd
 
@@ -38,6 +46,14 @@ git checkout b930e9379
 popd
 
 wget https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.38.5/CPM.cmake -O CPM_0.38.5.cmake
-wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.bz2
+wget https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.bz2 -O eigen-3.4.0.tar.bz2
+
+popd
+
+pushd ${DIR}
+
+source ${TARGET}/patch.sh
+cp ${TARGET}/build* ${SCIDAC}
+tar -czf scidac.tgz scidac
 
 popd

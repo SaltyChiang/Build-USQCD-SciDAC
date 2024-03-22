@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-ROOT=$HOME/scidac
+DIR=$( cd $( dirname ${BASH_SOURCE[0]} ) && pwd )
+ROOT=${DIR}/scidac
 
 mkdir -p ${ROOT}
 pushd ${ROOT}

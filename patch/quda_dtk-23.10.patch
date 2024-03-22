@@ -1,0 +1,74 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 03ea9f4fb..ab0e952b0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -430,6 +430,7 @@ if(QUDA_DOWNLOAD_EIGEN)
+     NAME Eigen
+     VERSION ${QUDA_EIGEN_VERSION}
+     URL https://gitlab.com/libeigen/eigen/-/archive/${QUDA_EIGEN_VERSION}/eigen-${QUDA_EIGEN_VERSION}.tar.bz2
++    URL_HASH MD5=132DDE48FE2B563211675626D29F1707
+     DOWNLOAD_ONLY YES
+     SYSTEM YES)
+   target_include_directories(Eigen SYSTEM INTERFACE ${Eigen_SOURCE_DIR})
+diff --git a/include/kernels/reduce_init.cuh b/include/kernels/reduce_init.cuh
+index f5a130a38..6c9b4590c 100644
+--- a/include/kernels/reduce_init.cuh
++++ b/include/kernels/reduce_init.cuh
+@@ -1,6 +1,11 @@
+ #include <reduce_helper.h>
+ #include <kernel.h>
+ 
++__device__ inline void *operator new(size_t size, void *__ptr) { return __ptr; }
++__device__ inline void *operator new[](size_t size, void *__ptr) { return __ptr; }
++__device__ inline void operator delete(void *, void *) {}
++__device__ inline void operator delete[](void *, void *) {}
++
+ namespace quda {
+ 
+   namespace reducer {
+diff --git a/lib/targets/hip/malloc.cpp b/lib/targets/hip/malloc.cpp
+index 6fd0986b9..ac509ac73 100644
+--- a/lib/targets/hip/malloc.cpp
++++ b/lib/targets/hip/malloc.cpp
+@@ -528,7 +528,7 @@ namespace quda
+       errorQuda("hipPointerGetAttributes returned error: %s\n", hipGetErrorString(error));
+     }
+ 
+-    switch (attr.type) {
++    switch (attr.memoryType) {
+ #if HIP_VERSION_MAJOR >= 6
+     case hipMemoryTypeUnregistered: return QUDA_CPU_FIELD_LOCATION;
+ #endif  // HIP_VERSION_MAJOR >= 6
+@@ -536,7 +536,7 @@ namespace quda
+     case hipMemoryTypeDevice: return QUDA_CUDA_FIELD_LOCATION;
+     case hipMemoryTypeArray: return QUDA_CUDA_FIELD_LOCATION;
+     case hipMemoryTypeUnified: return QUDA_CUDA_FIELD_LOCATION; ///< Not used currently
+-    default: errorQuda("Unknown memory type %d\n", attr.type); return QUDA_INVALID_FIELD_LOCATION;
++    default: errorQuda("Unknown memory type %d\n", attr.memoryType); return QUDA_INVALID_FIELD_LOCATION;
+     }
+   }
+ 
+diff --git a/lib/targets/hip/quda_api.cpp b/lib/targets/hip/quda_api.cpp
+index 8fff9a75a..e6f7dfd1b 100644
+--- a/lib/targets/hip/quda_api.cpp
++++ b/lib/targets/hip/quda_api.cpp
+@@ -125,9 +125,16 @@ namespace quda
+   qudaError_t qudaLaunchKernel(const void *func, const TuneParam &tp, const qudaStream_t &stream, const void *arg)
+   {
+     // no driver API variant here since we have C++ functions
+-    void *args[] = {const_cast<void *>(arg)};
+-    PROFILE(hipError_t error = hipLaunchKernel(func, tp.grid, tp.block, args, tp.shared_bytes, get_stream(stream)),
+-            QUDA_PROFILE_LAUNCH_KERNEL);
++    struct hipFuncAttributes attr;
++    qudaFuncGetAttributes(attr, func);
++    hipError_t error;
++    if (tp.block.x * tp.block.y * tp.block.z > attr.maxThreadsPerBlock) {
++      error = hipErrorLaunchFailure;
++    } else {
++      void *args[] = {const_cast<void *>(arg)};
++      PROFILE(error = hipLaunchKernel(func, tp.grid, tp.block, args, tp.shared_bytes, get_stream(stream)),
++              QUDA_PROFILE_LAUNCH_KERNEL);
++    }
+     set_runtime_error(error, __func__, __func__, __FILE__, __STRINGIFY__(__LINE__), activeTuning());
+     return error == hipSuccess ? QUDA_SUCCESS : QUDA_ERROR;
+   }
