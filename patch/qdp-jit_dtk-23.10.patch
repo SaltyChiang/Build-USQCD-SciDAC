@@ -11,44 +11,4 @@ index 0619aa28..9af9c14c 100644
    if( QDP_ENABLE_ROCM_STATS )
      set(QDP_USE_ROCM_STATS "1")
      find_package(amd_comgr REQUIRED)
-diff --git a/lib/qdp_gpu_rocm.cc b/lib/qdp_gpu_rocm.cc
-index 5205f1b6..d28284a1 100644
---- a/lib/qdp_gpu_rocm.cc
-+++ b/lib/qdp_gpu_rocm.cc
-@@ -28,6 +28,7 @@ namespace QDP {
-     int deviceCount;
-     int deviceId;     // the device we use
-     int gcnArch;
-+    std::string gcnArchName;
- 
-     size_t mem_free, mem_total;
- 
-@@ -685,10 +686,12 @@ namespace QDP {
-     max_blocky = roundDown2pow( prop.maxThreadsDim[1] );
-     max_blockz = roundDown2pow( prop.maxThreadsDim[2] );
-     gcnArch = prop.gcnArch;
-+    gcnArchName = std::string(prop.gcnArchName);
-     
-     QDPIO::cout << "GPU autodetect\n";
-     QDPIO::cout << "  Device name                         : " << std::string( prop.name ) << "\n";
-     QDPIO::cout << "  GCN architecture                    : gfx" << prop.gcnArch << "\n";
-+    QDPIO::cout << "  GCN architecture name               : " << prop.gcnArchName << "\n";
-     QDPIO::cout << "  Shared memory                       : " << smem/1024  << " KB\n";
-     QDPIO::cout << "  Max grid  (x,y,z)                   : (" << max_gridx << "," << max_gridy << "," << max_gridz << ")\n";
-     QDPIO::cout << "  Max block (x,y,z)                   : (" << max_blockx << "," << max_blocky << "," << max_blockz << ")\n";
-@@ -803,11 +806,10 @@ namespace QDP {
- 
-   std::string gpu_get_arch()
-   {
--    if( gcnArch == 910 ) {
--      return "gfx90a";
--    }
--    else { 
--      return "gfx" + std::to_string(gcnArch);
-+    if (gcnArchName.find(":") <= gcnArchName.length()) {
-+      return gcnArchName.substr(0, gcnArchName.find(":"));
-+    } else {
-+      return gcnArchName;
-     }
-   }
  

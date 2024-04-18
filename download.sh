@@ -29,7 +29,7 @@ popd
 git clone https://github.com/JeffersonLab/qdp-jit.git --recursive
 pushd qdp-jit
 # git checkout devel
-git checkout 299b7937e
+git checkout e4362392a
 git submodule update --recursive
 popd
 
@@ -42,7 +42,7 @@ popd
 git clone https://github.com/lattice/quda.git
 pushd quda
 # git checkout develop
-git checkout e5cb8cb5f
+git checkout 56ab21cbb
 popd
 
 if !([ -f CPM_0.38.5.cmake ] && [ "$(sha256sum CPM_0.38.5.cmake | awk '{print $1}')" == "192aa0ccdc57dfe75bd9e4b176bf7fb5692fd2b3e3f7b09c74856fc39572b31c" ]); then
