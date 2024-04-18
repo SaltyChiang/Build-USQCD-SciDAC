@@ -12,6 +12,7 @@ wget https://files.pythonhosted.org/packages/98/5d/5738903efe0ecb73e51eb44feafba
 wget https://files.pythonhosted.org/packages/7a/7c/d7b2a0417af6428440c0ad7cb9799073e507b1a465f827d058b826236964/numpy-1.24.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl -O numpy-1.24.4-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 wget https://cancon.hpccube.com:65024/directlink/1/DTK-23.10.1_hpcapps-20240125/cupy/centos/cupy-12.0.0b3-cp38-cp38-linux_x86_64.whl -O cupy-12.0.0b3-cp38-cp38-linux_x86_64.whl
 wget https://cancon.hpccube.com:65024/directlink/1/DTK-23.10.1_hpcapps-20240125/cupy/centos/cupy-12.0.0b3-cp39-cp39-linux_x86_64.whl -O cupy-12.0.0b3-cp39-cp39-linux_x86_64.whl
+wget https://files.pythonhosted.org/packages/bc/19/404708a7e54ad2798907210462fd950c3442ea51acc8790f3da48d2bee8b/opt_einsum-3.3.0-py3-none-any.whl -O opt_einsum-3.3.0-py3-none-any.whl
 wget https://github.com/CLQCD/PyQUDA/releases/download/v0.6.16/PyQUDA-0.6.16.tar.gz -O PyQUDA-0.6.16.tar.gz
 popd
 
