@@ -19,3 +19,16 @@ tar -xzvf scidac.tgz
 cd scidac
 ./build_offline.sh
 ```
+
+## Options
+
+You should change the values of some variables in `build_offline.sh`. The example below builds these softwares on a platform with 32 CPU cores (`JOBS` and `QUDA_JOBS`) and some sm_70 GPUs (`GPU_TARGET` term, which is NVIDIA Tesla V100). The libraries (libqdp, libchroma and libquda) are built into shared libraries (`BUILD_SHAREDLIB`). `LLVM_VERSION` indicates qdp-jit related executables and shared libraries are linked against LLVM 16.
+
+```bash
+BUILD_SHAREDLIB=ON
+GPU_TARGET=sm_70
+HETEROGENEOUS_ATOMIC=ON
+LLVM_VERSION=16
+JOBS=32
+QUDA_JOBS=32
+```
