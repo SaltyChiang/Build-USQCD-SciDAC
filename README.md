@@ -2,6 +2,32 @@
 
 This is a repository for those who want to build USQCD software (Chroma with QUDA and QDP-JIT enabled) on CLQCD clusters.
 
+## Prerequisites
+
+- Wget
+- Git
+- Make
+- CMake 3.18+
+- GCC 10+ (for C++20 standard)
+- LLVM 14+
+- NVCC 11+
+
+### Debian/Ubuntu
+
+```bash
+sudo apt install git build-essential cmake llvm-dev nvidia-cuda-toolkit
+```
+
+If the default GCC is not compatible with the NVCC, you can use `cuda-gcc` and `cuda-g++` instead of original ones. Install them with
+
+```bash
+sudo apt install nvidia-cuda-toolkit-gcc
+```
+
+#### *Default GCC shipped with Ubuntu 22.04 LTS breaks the compilation along with NVCC. Use GCC 10 instead.*
+
+Check [this](https://github.com/NVIDIA/nccl/issues/650) for more information.
+
 ## Usage
 
 Download the source code anywhere you like:
