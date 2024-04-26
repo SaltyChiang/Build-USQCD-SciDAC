@@ -9,13 +9,14 @@ This is a repository for those who want to build USQCD software (Chroma with QUD
 - Make
 - CMake 3.18+
 - GCC 10+ (for C++20 standard)
+- OpenMPI/MPICH2
 - LLVM 14+
 - NVCC 11+
 
 ### Debian/Ubuntu
 
 ```bash
-sudo apt install git build-essential cmake llvm-dev nvidia-cuda-toolkit
+sudo apt install git build-essential cmake mpi-default-dev llvm-dev nvidia-cuda-toolkit
 ```
 
 If the default GCC is not compatible with the NVCC, you can use `cuda-gcc` and `cuda-g++` instead of original ones. Install them with
