@@ -6,6 +6,7 @@ HETEROGENEOUS_ATOMIC=ON
 LLVM_VERSION=16
 JOBS=32
 QUDA_JOBS=32
+OFFLINE=1
 
 ROOT=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 SRC=${ROOT}
@@ -43,13 +44,15 @@ function build_quda() {
             if [ $1 -gt 2 ]; then
                 rm -rf ./*
             fi
-            if !([ -f cmake/CPM_0.38.5.cmake ] && [ "$(sha256sum cmake/CPM_0.38.5.cmake | awk '{print $1}')" == "192aa0ccdc57dfe75bd9e4b176bf7fb5692fd2b3e3f7b09c74856fc39572b31c" ]); then
-                mkdir -p cmake
-                cp ${ROOT}/CPM_0.38.5.cmake cmake
-            fi
-            if !([ -f _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 ] && [ "$(sha256sum _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 | awk '{print $1}')" == "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626" ]); then
-                mkdir -p _deps/eigen-subbuild/eigen-populate-prefix/src
-                cp ${ROOT}/eigen-3.4.0.tar.bz2 _deps/eigen-subbuild/eigen-populate-prefix/src
+            if [ ${OFFLINE} -gt 0 ]; then
+                if !([ -f cmake/CPM_0.38.5.cmake ] && [ "$(sha256sum cmake/CPM_0.38.5.cmake | awk '{print $1}')" == "192aa0ccdc57dfe75bd9e4b176bf7fb5692fd2b3e3f7b09c74856fc39572b31c" ]); then
+                    mkdir -p cmake
+                    cp ${ROOT}/CPM_0.38.5.cmake cmake
+                fi
+                if !([ -f _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 ] && [ "$(sha256sum _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 | awk '{print $1}')" == "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626" ]); then
+                    mkdir -p _deps/eigen-subbuild/eigen-populate-prefix/src
+                    cp ${ROOT}/eigen-3.4.0.tar.bz2 _deps/eigen-subbuild/eigen-populate-prefix/src
+                fi
             fi
             ${@:4} && cmake --build . -j$2 && cmake --install .
         else
@@ -109,24 +112,24 @@ build ${BUILD_QDP_JIT} ${JOBS} qdp-jit \
     -DCMAKE_INSTALL_RPATH=${DST}/qdp-jit/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
     -DCMAKE_INSTALL_PREFIX=${DST}/qdp-jit ${SRC}/qdp-jit
 
-build_quda ${BUILD_QUDA} ${QUDA_JOBS} quda \
+build_quda ${BUILD_QUDA} ${QUDA_JOBS} quda-${GPU_TARGET} \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=${BUILD_SHAREDLIB} \
     -DQUDA_GPU_ARCH=${GPU_TARGET} -DQUDA_HETEROGENEOUS_ATOMIC=${HETEROGENEOUS_ATOMIC} \
     -DQUDA_QMP=ON -DQUDA_QIO=ON \
     -DQUDA_LAPLACE=ON -DQUDA_MULTIGRID=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdpxx/lib/cmake/QIO \
-    -DCMAKE_INSTALL_PREFIX=${DST}/quda ${SRC}/quda
+    -DCMAKE_INSTALL_PREFIX=${DST}/quda-${GPU_TARGET} ${SRC}/quda
 
-build_quda ${BUILD_QUDA_JIT} ${QUDA_JOBS} quda-jit \
+build_quda ${BUILD_QUDA_JIT} ${QUDA_JOBS} quda-jit-${GPU_TARGET} \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=${BUILD_SHAREDLIB} \
     -DQUDA_GPU_ARCH=${GPU_TARGET} -DQUDA_HETEROGENEOUS_ATOMIC=${HETEROGENEOUS_ATOMIC} \
     -DQUDA_QMP=ON -DQUDA_QIO=ON \
     -DQUDA_QDPJIT=ON -DQUDA_INTERFACE_QDPJIT=ON -DQUDA_BUILD_ALL_TESTS=OFF \
     -DQUDA_LAPLACE=ON -DQUDA_MULTIGRID=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdpxx/lib/cmake/QIO -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX \
-    -DCMAKE_INSTALL_PREFIX=${DST}/quda-jit ${SRC}/quda
+    -DCMAKE_INSTALL_PREFIX=${DST}/quda-jit-${GPU_TARGET} ${SRC}/quda
 
-build_quda ${BUILD_PYQUDA} ${QUDA_JOBS} pyquda \
+build_quda ${BUILD_PYQUDA} ${QUDA_JOBS} pyquda-${GPU_TARGET} \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=ON \
     -DQUDA_GPU_ARCH=${GPU_TARGET} -DQUDA_HETEROGENEOUS_ATOMIC=${HETEROGENEOUS_ATOMIC} \
     -DQUDA_MPI=ON \
@@ -136,18 +139,18 @@ build_quda ${BUILD_PYQUDA} ${QUDA_JOBS} pyquda \
     -DQUDA_DIRAC_TWISTED_CLOVER=OFF -DQUDA_DIRAC_TWISTED_MASS=OFF -DQUDA_DIRAC_NDEG_TWISTED_CLOVER=OFF -DQUDA_DIRAC_NDEG_TWISTED_MASS=OFF \
     -DQUDA_LAPLACE=ON -DQUDA_MULTIGRID=ON \
     -DQUDA_MULTIGRID_NVEC_LIST="6,24,32,64,96" \
-    -DCMAKE_INSTALL_PREFIX=${DST}/pyquda ${SRC}/quda
+    -DCMAKE_INSTALL_PREFIX=${DST}/pyquda-${GPU_TARGET} ${SRC}/quda
 
-build ${BUILD_CHROMA} ${JOBS} chroma \
+build ${BUILD_CHROMA} ${JOBS} chroma-${GPU_TARGET} \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
     -DChroma_ENABLE_OPENMP=ON -DChroma_ENABLE_QUDA=ON \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda/lib/cmake/QUDA \
-    -DCMAKE_INSTALL_RPATH=${DST}/chroma/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/chroma ${SRC}/chroma
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-${GPU_TARGET}/lib/cmake/QUDA \
+    -DCMAKE_INSTALL_RPATH=${DST}/chroma-${GPU_TARGET}/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
+    -DCMAKE_INSTALL_PREFIX=${DST}/chroma-${GPU_TARGET} ${SRC}/chroma
 
-build ${BUILD_CHROMA_JIT} ${JOBS} chroma-jit \
+build ${BUILD_CHROMA_JIT} ${JOBS} chroma-jit-${GPU_TARGET} \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
     -DChroma_ENABLE_OPENMP=ON -DChroma_ENABLE_JIT_CLOVER=ON -DChroma_ENABLE_QUDA=ON \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-jit/lib/cmake/QUDA \
-    -DCMAKE_INSTALL_RPATH=${DST}/chroma-jit/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/chroma-jit ${SRC}/chroma
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-jit-${GPU_TARGET}/lib/cmake/QUDA \
+    -DCMAKE_INSTALL_RPATH=${DST}/chroma-jit-${GPU_TARGET}/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
+    -DCMAKE_INSTALL_PREFIX=${DST}/chroma-jit-${GPU_TARGET} ${SRC}/chroma
