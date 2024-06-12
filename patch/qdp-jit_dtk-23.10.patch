@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0619aa28..9af9c14c 100644
+index cc02d009..2424755c 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -113,7 +113,7 @@ if( ${QDP_ENABLE_BACKEND} STREQUAL "ROCM")
+@@ -122,7 +122,7 @@ if( ${QDP_ENABLE_BACKEND} STREQUAL "ROCM")
    find_package(LLD REQUIRED)
    find_package(hip REQUIRED)
  
@@ -11,4 +11,3 @@ index 0619aa28..9af9c14c 100644
    if( QDP_ENABLE_ROCM_STATS )
      set(QDP_USE_ROCM_STATS "1")
      find_package(amd_comgr REQUIRED)
- 

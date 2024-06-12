@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 03ea9f4fb..ab0e952b0 100644
+index edd8e63fe..ca108ba3f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -430,6 +430,7 @@ if(QUDA_DOWNLOAD_EIGEN)
+@@ -432,6 +432,7 @@ if(QUDA_DOWNLOAD_EIGEN)
      NAME Eigen
      VERSION ${QUDA_EIGEN_VERSION}
      URL https://gitlab.com/libeigen/eigen/-/archive/${QUDA_EIGEN_VERSION}/eigen-${QUDA_EIGEN_VERSION}.tar.bz2

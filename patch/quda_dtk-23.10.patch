@@ -38,30 +38,3 @@ index 8fff9a75a..e6f7dfd1b 100644
      set_runtime_error(error, __func__, __func__, __FILE__, __STRINGIFY__(__LINE__), activeTuning());
      return error == hipSuccess ? QUDA_SUCCESS : QUDA_ERROR;
    }
-diff --git a/lib/targets/hip/malloc.cpp b/lib/targets/hip/malloc.cpp
-index 6fd0986b9..f46c44c8d 100644
---- a/lib/targets/hip/malloc.cpp
-+++ b/lib/targets/hip/malloc.cpp
-@@ -528,15 +528,21 @@ namespace quda
-       errorQuda("hipPointerGetAttributes returned error: %s\n", hipGetErrorString(error));
-     }
- 
--    switch (attr.type) {
- #if HIP_VERSION_MAJOR >= 6
-+    switch (attr.type) {
-     case hipMemoryTypeUnregistered: return QUDA_CPU_FIELD_LOCATION;
-+#else
-+    switch (attr.memoryType) {
- #endif  // HIP_VERSION_MAJOR >= 6
-     case hipMemoryTypeHost: return QUDA_CPU_FIELD_LOCATION;
-     case hipMemoryTypeDevice: return QUDA_CUDA_FIELD_LOCATION;
-     case hipMemoryTypeArray: return QUDA_CUDA_FIELD_LOCATION;
-     case hipMemoryTypeUnified: return QUDA_CUDA_FIELD_LOCATION; ///< Not used currently
-+#if HIP_VERSION_MAJOR >= 6
-     default: errorQuda("Unknown memory type %d\n", attr.type); return QUDA_INVALID_FIELD_LOCATION;
-+#else
-+    default: errorQuda("Unknown memory type %d\n", attr.memoryType); return QUDA_INVALID_FIELD_LOCATION;
-+#endif
-     }
-   }
-

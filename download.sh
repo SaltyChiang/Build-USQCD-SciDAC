@@ -45,7 +45,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git restore *
     git checkout devel
     git pull
-    git checkout 7c0cdf308
+    git checkout 5b71796d1
     git submodule update --recursive
     popd
 
@@ -54,7 +54,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git restore *
     git checkout develop
     git pull
-    git checkout c051eac9b
+    git checkout f60866945
     popd
 
     if !([ -f CPM_0.38.5.cmake ] && [ "$(sha256sum CPM_0.38.5.cmake | awk '{print $1}')" == "192aa0ccdc57dfe75bd9e4b176bf7fb5692fd2b3e3f7b09c74856fc39572b31c" ]); then
