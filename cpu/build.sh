@@ -2,7 +2,6 @@
 
 BUILD_SHAREDLIB=ON
 JOBS=32
-QUDA_JOBS=32
 
 ROOT=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 SRC=${ROOT}
