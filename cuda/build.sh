@@ -9,14 +9,14 @@ JOBS=32
 QUDA_JOBS=32
 OFFLINE=1
 
+# 0: Nothing; 1: Build and install; 2: Configure, build and install; 3: Clean, configure, build and install.
+BUILD_CHROMA=2
+BUILD_CHROMA_JIT=2
+
 ROOT=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 SRC=${ROOT}
 BIN=${ROOT}/build
 DST=${ROOT}/install
-
-# 0: Nothing; 1: Build and install; 2: Configure, build and install; 3: Clean, configure, build and install.
-BUILD_CHROMA=2
-BUILD_CHROMA_JIT=2
 
 function build() {
     if [ $1 -gt 0 ]; then
@@ -83,6 +83,8 @@ if [ ${BUILD_CHROMA_JIT} -gt 0 ]; then
     BUILD_QUDA_JIT=$((${ENABLE_QUDA} == "OFF" ? 0 : ${BUILD_QUDA_JIT}))
 fi
 
+GPU_ARCH=$((${ENABLE_QUDA} == "OFF" ? "noquda" : ${BUILD_QUDA_JIT}))
+
 echo "BUILD_QMP=${BUILD_QMP}"
 echo "BUILD_QDPXX=${BUILD_QDPXX}"
 echo "BUILD_QDP_JIT=${BUILD_QDP_JIT}"
@@ -90,6 +92,7 @@ echo "BUILD_QUDA=${BUILD_QUDA}"
 echo "BUILD_QUDA_JIT=${BUILD_QUDA_JIT}"
 echo "BUILD_CHROMA=${BUILD_CHROMA}"
 echo "BUILD_CHROMA_JIT=${BUILD_CHROMA_JIT}"
+echo "GPU_ARCH=${GPU_ARCH}"
 
 build ${BUILD_QMP} ${JOBS} qmp \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \

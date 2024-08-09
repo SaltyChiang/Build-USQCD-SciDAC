@@ -8,13 +8,13 @@ JOBS=16
 QUDA_JOBS=16
 OFFLINE=1
 
+# 0: Nothing; 1: Build and install; 2: Configure, build and install; 3: Clean, configure, build and install.
+BUILD_PYQUDA=2
+
 ROOT=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 SRC=${ROOT}
 BIN=${ROOT}/build
 DST=${ROOT}/install
-
-# 0: Nothing; 1: Build and install; 2: Configure, build and install; 3: Clean, configure, build and install.
-BUILD_PYQUDA=2
 
 function build_quda() {
     if [ $1 -gt 0 ]; then
