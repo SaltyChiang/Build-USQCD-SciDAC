@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
 
 BUILD_SHAREDLIB=ON
-GPU_TARGET=sm_70
+GPU_ARCH=sm_70
 HETEROGENEOUS_ATOMIC=ON
-LLVM_VERSION=16
 JOBS=32
 QUDA_JOBS=32
 OFFLINE=1
+
+# 0: Nothing; 1: Build and install; 2: Configure, build and install; 3: Clean, configure, build and install.
+BUILD_PYQUDA=2
 
 ROOT=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
 SRC=${ROOT}
 BIN=${ROOT}/build
 DST=${ROOT}/install
-
-# 0: Nothing; 1: Build and install; 2: Configure, build and install; 3: Clean, configure, build and install.
-BUILD_PYQUDA=2
 
 function build_quda() {
     if [ $1 -gt 0 ]; then
@@ -44,13 +43,14 @@ function build_quda() {
 }
 
 echo "BUILD_PYQUDA=${BUILD_PYQUDA}"
+echo "GPU_ARCH=${GPU_ARCH}"
 
-build_quda ${BUILD_PYQUDA} ${QUDA_JOBS} pyquda-${GPU_TARGET} \
+build_quda ${BUILD_PYQUDA} ${QUDA_JOBS} pyquda-${GPU_ARCH} \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=ON \
-    -DQUDA_GPU_ARCH=${GPU_TARGET} -DQUDA_HETEROGENEOUS_ATOMIC=${HETEROGENEOUS_ATOMIC} \
+    -DQUDA_GPU_ARCH=${GPU_ARCH} -DQUDA_HETEROGENEOUS_ATOMIC=${HETEROGENEOUS_ATOMIC} \
     -DQUDA_MPI=ON \
     -DQUDA_COVDEV=ON -DQUDA_MULTIGRID=ON \
     -DQUDA_CLOVER_DYNAMIC=OFF -DQUDA_CLOVER_RECONSTRUCT=OFF \
     -DQUDA_DIRAC_DEFAULT_OFF=ON -DQUDA_DIRAC_WILSON=ON -DQUDA_DIRAC_CLOVER=ON -DQUDA_DIRAC_STAGGERED=ON -DQUDA_DIRAC_LAPLACE=ON \
-    -DCMAKE_INSTALL_PREFIX=${DST}/pyquda-${GPU_TARGET} ${SRC}/quda
+    -DCMAKE_INSTALL_PREFIX=${DST}/pyquda-${GPU_ARCH} ${SRC}/quda
     # -DQUDA_MULTIGRID_NVEC_LIST="6,24,32,64,96" \
