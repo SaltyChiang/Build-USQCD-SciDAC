@@ -45,7 +45,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git restore *
     git checkout devel
     git pull
-    git checkout 5b71796d1
+    git checkout dc3dabd2a
     git submodule update --recursive
     popd
 
@@ -54,7 +54,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git restore *
     git checkout develop
     git pull
-    git checkout 6964f900c
+    git checkout 75167987b
     popd
 
     if !([ -f CPM_0.38.5.cmake ] && [ "$(sha256sum CPM_0.38.5.cmake | awk '{print $1}')" == "192aa0ccdc57dfe75bd9e4b176bf7fb5692fd2b3e3f7b09c74856fc39572b31c" ]); then
@@ -71,6 +71,6 @@ pushd ${DIR}
 
 source ${TARGET}/patch.sh
 cp ${TARGET}/build* ${SCIDAC}
-tar -czf scidac.tgz scidac
+# tar -czf scidac.tgz scidac
 
 popd
