@@ -45,9 +45,9 @@ function build_quda() {
                 rm -rf ./*
             fi
             if [ ${OFFLINE} -gt 0 ]; then
-                if !([ -f cmake/CPM_0.38.5.cmake ] && [ "$(sha256sum cmake/CPM_0.38.5.cmake | awk '{print $1}')" == "192aa0ccdc57dfe75bd9e4b176bf7fb5692fd2b3e3f7b09c74856fc39572b31c" ]); then
+                if !([ -f cmake/CPM_0.40.2.cmake ] && [ "$(sha256sum cmake/CPM_0.40.2.cmake | awk '{print $1}')" == "c8cdc32c03816538ce22781ed72964dc864b2a34a310d3b7104812a5ca2d835d" ]); then
                     mkdir -p cmake
-                    cp ${ROOT}/CPM_0.38.5.cmake cmake
+                    cp ${ROOT}/CPM_0.40.2.cmake cmake
                 fi
                 if !([ -f _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 ] && [ "$(sha256sum _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 | awk '{print $1}')" == "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626" ]); then
                     mkdir -p _deps/eigen-subbuild/eigen-populate-prefix/src
