@@ -1,0 +1,64 @@
+diff --git a/include/color_spinor_field_order.h b/include/color_spinor_field_order.h
+index 25f523439..72985b971 100644
+--- a/include/color_spinor_field_order.h
++++ b/include/color_spinor_field_order.h
+@@ -1201,7 +1201,7 @@ namespace quda
+       using AllocInt = typename AllocType<huge_alloc>::type;
+       using norm_type = float;
+       Float *field = nullptr;
+-      //#define LEGACY_ACCESSOR_NORM // legacy code where norm pointer and offset are stored instead of computed
++#define LEGACY_ACCESSOR_NORM // legacy code where norm pointer and offset are stored instead of computed
+ #ifdef LEGACY_ACCESSOR_NORM
+       norm_type *norm = nullptr;
+ #endif
+diff --git a/include/kernels/dslash_pack.cuh b/include/kernels/dslash_pack.cuh
+index 94e046523..b9006c380 100644
+--- a/include/kernels/dslash_pack.cuh
++++ b/include/kernels/dslash_pack.cuh
+@@ -28,7 +28,7 @@ namespace quda
+     static constexpr bool spinor_direct_load = false; // false means texture load
+ 
+     static constexpr bool packkernel = true;
+-    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, true>::type F;
++    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, false>::type F;
+     using Ghost = typename colorspinor::GhostNOrder<Float, nSpin, nColor, colorspinor::getNative<Float>(nSpin),
+                                                     spin_project, spinor_direct_load, false>;
+ 
+diff --git a/include/kernels/dslash_wilson.cuh b/include/kernels/dslash_wilson.cuh
+index 514c4df95..558f82c2c 100644
+--- a/include/kernels/dslash_wilson.cuh
++++ b/include/kernels/dslash_wilson.cuh
+@@ -21,7 +21,7 @@ namespace quda
+     static constexpr int nSpin = 4;
+     static constexpr bool spin_project = true;
+     static constexpr bool spinor_direct_load = false; // false means texture load
+-    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, true>::type F;
++    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, false>::type F;
+ 
+     using Ghost = typename colorspinor::GhostNOrder<Float, nSpin, nColor, colorspinor::getNative<Float>(nSpin),
+                                                     spin_project, spinor_direct_load, false>;
+diff --git a/include/targets/hip/kernel.h b/include/targets/hip/kernel.h
+index 341bb888d..3862361e7 100644
+--- a/include/targets/hip/kernel.h
++++ b/include/targets/hip/kernel.h
+@@ -2,6 +2,7 @@
+ #include <hip/hip_runtime.h>
+ #include <kernel_helper.h>
+ #include <target_device.h>
++#include <constant_kernel_arg.h>
+ 
+ namespace quda
+ {
+diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
+index 950ac83a0..44934fb40 100644
+--- a/lib/CMakeLists.txt
++++ b/lib/CMakeLists.txt
+@@ -296,7 +296,7 @@ endif()
+ 
+ # Set the maximum multi-RHS per kernel if not already set by the target
+ if(NOT DEFINED QUDA_MAX_MULTI_RHS)
+-  set(QUDA_MAX_MULTI_RHS "16" CACHE STRING "maximum number of simultaneous RHS in a kernel")
++  set(QUDA_MAX_MULTI_RHS "32" CACHE STRING "maximum number of simultaneous RHS in a kernel")
+   message(STATUS "Max number of rhs per kernel: ${QUDA_MAX_MULTI_RHS}")
+ endif()
+ 

@@ -3,7 +3,7 @@
 if [ -d ${SCIDAC}/qdp-jit ]; then
     pushd ${SCIDAC}/qdp-jit
     git restore *
-    git apply ${DIR}/patch/qdp-jit_dtk-23.10.patch
+    git apply ${DIR}/patch/qdp-jit_dtk.patch
     popd
 fi
 
@@ -11,6 +11,8 @@ if [ -d ${SCIDAC}/quda ]; then
     pushd ${SCIDAC}/quda
     git restore *
     git apply ${DIR}/patch/quda_offline.patch
-    git apply ${DIR}/patch/quda_dtk-23.10.patch
+    git apply ${DIR}/patch/quda_hisq_rhmc.patch
+    git apply ${DIR}/patch/quda_dtk.patch
+    git apply ${DIR}/patch/quda_dtk_performance.patch
     popd
 fi
