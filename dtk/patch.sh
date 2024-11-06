@@ -10,8 +10,6 @@ fi
 if [ -d ${SCIDAC}/quda ]; then
     pushd ${SCIDAC}/quda
     git restore *
-    git apply ${DIR}/patch/quda_offline.patch
-    git apply ${DIR}/patch/quda_hisq_rhmc.patch
     git apply ${DIR}/patch/quda_dtk.patch
     git apply ${DIR}/patch/quda_dtk_performance.patch
     popd
