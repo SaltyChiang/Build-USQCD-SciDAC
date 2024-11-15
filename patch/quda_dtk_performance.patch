@@ -1,42 +1,15 @@
-diff --git a/include/color_spinor_field_order.h b/include/color_spinor_field_order.h
-index 25f523439..72985b971 100644
---- a/include/color_spinor_field_order.h
-+++ b/include/color_spinor_field_order.h
-@@ -1201,7 +1201,7 @@ namespace quda
-       using AllocInt = typename AllocType<huge_alloc>::type;
-       using norm_type = float;
-       Float *field = nullptr;
--      //#define LEGACY_ACCESSOR_NORM // legacy code where norm pointer and offset are stored instead of computed
-+#define LEGACY_ACCESSOR_NORM // legacy code where norm pointer and offset are stored instead of computed
- #ifdef LEGACY_ACCESSOR_NORM
-       norm_type *norm = nullptr;
- #endif
-diff --git a/include/kernels/dslash_pack.cuh b/include/kernels/dslash_pack.cuh
-index 94e046523..b9006c380 100644
---- a/include/kernels/dslash_pack.cuh
-+++ b/include/kernels/dslash_pack.cuh
-@@ -28,7 +28,7 @@ namespace quda
-     static constexpr bool spinor_direct_load = false; // false means texture load
+diff --git a/include/targets/hip/block_reduction_kernel.h b/include/targets/hip/block_reduction_kernel.h
+index e82d6f2df..d81c213dd 100644
+--- a/include/targets/hip/block_reduction_kernel.h
++++ b/include/targets/hip/block_reduction_kernel.h
+@@ -1,6 +1,7 @@
+ #pragma once
  
-     static constexpr bool packkernel = true;
--    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, true>::type F;
-+    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, false>::type F;
-     using Ghost = typename colorspinor::GhostNOrder<Float, nSpin, nColor, colorspinor::getNative<Float>(nSpin),
-                                                     spin_project, spinor_direct_load, false>;
+ #include <target_device.h>
++#include <constant_kernel_arg.h>
+ #include <reduce_helper.h>
  
-diff --git a/include/kernels/dslash_wilson.cuh b/include/kernels/dslash_wilson.cuh
-index 514c4df95..558f82c2c 100644
---- a/include/kernels/dslash_wilson.cuh
-+++ b/include/kernels/dslash_wilson.cuh
-@@ -21,7 +21,7 @@ namespace quda
-     static constexpr int nSpin = 4;
-     static constexpr bool spin_project = true;
-     static constexpr bool spinor_direct_load = false; // false means texture load
--    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, true>::type F;
-+    typedef typename colorspinor_mapper<Float, nSpin, nColor, spin_project, spinor_direct_load, false>::type F;
- 
-     using Ghost = typename colorspinor::GhostNOrder<Float, nSpin, nColor, colorspinor::getNative<Float>(nSpin),
-                                                     spin_project, spinor_direct_load, false>;
+ namespace quda
 diff --git a/include/targets/hip/kernel.h b/include/targets/hip/kernel.h
 index 341bb888d..3862361e7 100644
 --- a/include/targets/hip/kernel.h
@@ -49,16 +22,27 @@ index 341bb888d..3862361e7 100644
  
  namespace quda
  {
-diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
-index 950ac83a0..44934fb40 100644
---- a/lib/CMakeLists.txt
-+++ b/lib/CMakeLists.txt
-@@ -296,7 +296,7 @@ endif()
+diff --git a/include/targets/hip/reduction_kernel.h b/include/targets/hip/reduction_kernel.h
+index 3bccf1458..5590df2ac 100644
+--- a/include/targets/hip/reduction_kernel.h
++++ b/include/targets/hip/reduction_kernel.h
+@@ -1,5 +1,6 @@
+ #pragma once
+ #include <target_device.h>
++#include <constant_kernel_arg.h>
+ #include <reduce_helper.h>
  
- # Set the maximum multi-RHS per kernel if not already set by the target
- if(NOT DEFINED QUDA_MAX_MULTI_RHS)
--  set(QUDA_MAX_MULTI_RHS "16" CACHE STRING "maximum number of simultaneous RHS in a kernel")
-+  set(QUDA_MAX_MULTI_RHS "32" CACHE STRING "maximum number of simultaneous RHS in a kernel")
-   message(STATUS "Max number of rhs per kernel: ${QUDA_MAX_MULTI_RHS}")
- endif()
+ namespace quda
+diff --git a/include/targets/hip/target_device.h b/include/targets/hip/target_device.h
+index bcc430dbc..0ca7fb365 100644
+--- a/include/targets/hip/target_device.h
++++ b/include/targets/hip/target_device.h
+@@ -172,7 +172,7 @@ namespace quda
+        the kernel arguments passed to a kernel on the target
+        architecture.
+     */
+-    constexpr size_t max_kernel_arg_size() { return 4096; }
++    constexpr size_t max_kernel_arg_size() { return 0; }
  
+     /**
+        @brief Helper function that returns true if we are to pass the
