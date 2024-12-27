@@ -49,9 +49,9 @@ function build_quda() {
                     mkdir -p cmake
                     cp ${ROOT}/CPM_0.40.2.cmake cmake
                 fi
-                if !([ -f _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 ] && [ "$(sha256sum _deps/eigen-subbuild/eigen-populate-prefix/src/eigen-3.4.0.tar.bz2 | awk '{print $1}')" == "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626" ]); then
+                if !([ -f _deps/eigen-subbuild/eigen-populate-prefix/src/e67c494cba7180066e73b9f6234d0b2129f1cdf5.tar.bz2 ] && [ "$(sha256sum _deps/eigen-subbuild/eigen-populate-prefix/src/e67c494cba7180066e73b9f6234d0b2129f1cdf5.tar.bz2 | awk '{print $1}')" == "98d244932291506b75c4ae7459af29b1112ea3d2f04660686a925d9ef6634583" ]); then
                     mkdir -p _deps/eigen-subbuild/eigen-populate-prefix/src
-                    cp ${ROOT}/eigen-3.4.0.tar.bz2 _deps/eigen-subbuild/eigen-populate-prefix/src
+                    cp ${ROOT}/e67c494cba7180066e73b9f6234d0b2129f1cdf5.tar.bz2 _deps/eigen-subbuild/eigen-populate-prefix/src
                 fi
             fi
             ${@:4} && cmake --build . -j$2 && cmake --install .
