@@ -45,7 +45,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git restore *
     git checkout devel
     git pull
-    git checkout dc3dabd2a
+    git checkout f44d955e9
     git submodule update --recursive
     popd
 
