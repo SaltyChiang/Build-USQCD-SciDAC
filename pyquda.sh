@@ -18,7 +18,7 @@ pushd quda
 git restore *
 git checkout develop
 git pull
-git checkout 18bf43ed4
+git checkout de601bd58
 popd
 
 if !([ -f CPM_0.40.2.cmake ] && [ "$(sha256sum CPM_0.40.2.cmake | awk '{print $1}')" == "c8cdc32c03816538ce22781ed72964dc864b2a34a310d3b7104812a5ca2d835d" ]); then

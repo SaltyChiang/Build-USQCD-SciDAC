@@ -26,7 +26,7 @@ pushd qdpxx
 git restore *
 git checkout devel
 git pull
-git checkout 7a4bd2c2f
+git checkout 1d492ab61
 git submodule update --recursive
 popd
 
@@ -35,7 +35,7 @@ pushd chroma
 git restore *
 git checkout devel
 git pull
-git checkout 3ae4e0d39
+git checkout 785c34bc0
 git submodule update --recursive
 popd
 
@@ -45,7 +45,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git restore *
     git checkout devel
     git pull
-    git checkout f44d955e9
+    git checkout 82973e962
     git submodule update --recursive
     popd
 
@@ -54,7 +54,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git restore *
     git checkout develop
     git pull
-    git checkout 18bf43ed4
+    git checkout de601bd58
     popd
 
     if !([ -f CPM_0.40.2.cmake ] && [ "$(sha256sum CPM_0.40.2.cmake | awk '{print $1}')" == "c8cdc32c03816538ce22781ed72964dc864b2a34a310d3b7104812a5ca2d835d" ]); then
