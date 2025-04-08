@@ -35,7 +35,7 @@ pushd chroma
 git restore *
 git checkout devel
 git pull
-git checkout 785c34bc0
+git checkout 9e78369de
 git submodule update --recursive
 popd
 
