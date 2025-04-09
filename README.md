@@ -54,7 +54,6 @@ You should change the values of some variables in `build_offline.sh`. The exampl
 ```bash
 BUILD_SHAREDLIB=ON
 GPU_TARGET=sm_70
-HETEROGENEOUS_ATOMIC=ON
 LLVM_VERSION=16
 JOBS=32
 QUDA_JOBS=32
