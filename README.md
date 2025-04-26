@@ -37,9 +37,9 @@ Download the source code anywhere you like:
 ./download.sh cuda
 ```
 
-`cuda` here is the target you want to run on. `cuda` and `dtk` are avaliable options now.
+`cuda` here is the target you want to run on. `cpu`, `cuda` and `dtk` are avaliable options now.
 
-The `download.sh` script will download, patch and archive the source code you need. Upload or move `scidac.tgz` to where you want and unarchive it. Then you can build the binary with `build.sh` or `build_offline.sh`:
+The `download.sh` script will download, patch and archive the source code you need. Upload or move `scidac.tgz` to where you want and unarchive it. Then you can build the binary with `build.sh`:
 
 ```bash
 tar -xzvf scidac.tgz
@@ -49,12 +49,15 @@ cd scidac
 
 ## Options
 
-You should change the values of some variables in `build_offline.sh`. The example below builds these softwares on a platform with 32 CPU cores (`JOBS` and `QUDA_JOBS`) and some sm_70 GPUs (`GPU_TARGET` term, which is NVIDIA Tesla V100). The libraries (libqdp, libchroma and libquda) are built into shared libraries (`BUILD_SHAREDLIB`). `LLVM_VERSION` indicates qdp-jit related executables and shared libraries are linked against LLVM 16.
+You should change the values of some variables in `build.sh`. The example below builds these softwares on a platform with 32 CPU cores (`JOBS` and `QUDA_JOBS`) and some `sm_70` GPUs (`GPU_TARGET` term, which crossponds to NVIDIA Tesla V100). The QDP, QUDA and Chroma are built into shared libraries (`BUILD_SHAREDLIB`). `LLVM_VERSION` indicates QDP-JIT related libraries and executables are linked against LLVM 14.
 
 ```bash
 BUILD_SHAREDLIB=ON
-GPU_TARGET=sm_70
-LLVM_VERSION=16
+CPU_ARCH=x86_64
+GPU_ARCH=sm_70
+LLVM_VERSION=14
+ENABLE_QUDA=ON
 JOBS=32
 QUDA_JOBS=32
+OFFLINE=1
 ```
