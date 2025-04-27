@@ -11,6 +11,7 @@ fi
 if [ -d ${SCIDAC}/quda ]; then
     pushd ${SCIDAC}/quda
     git restore *
+    git apply ${DIR}/patch/quda_cmake.patch
     git apply ${DIR}/patch/quda_dtk.patch
     git apply ${DIR}/patch/quda_dtk_performance.patch
     popd

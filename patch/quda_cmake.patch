@@ -1,0 +1,21 @@
+diff --git a/cmake/find_target_cuda_dependencies.cmake b/cmake/find_target_cuda_dependencies.cmake
+index 3082b9b93..1d1ff232b 100644
+--- a/cmake/find_target_cuda_dependencies.cmake
++++ b/cmake/find_target_cuda_dependencies.cmake
+@@ -1,6 +1,5 @@
+ # CUDA Specific CMake
+ 
+-enable_language(CUDA)
+ 
+ find_dependency(CUDAToolkit REQUIRED)
+ 
+diff --git a/cmake/find_target_hip_dependencies.cmake b/cmake/find_target_hip_dependencies.cmake
+index c4ced99d7..0b90e2c46 100644
+--- a/cmake/find_target_hip_dependencies.cmake
++++ b/cmake/find_target_hip_dependencies.cmake
+@@ -1,5 +1,4 @@
+ # HIP Specific CMake
+-enable_language(HIP)
+ 
+ if (NOT DEFINED ROCM_PATH )
+   if (NOT DEFINED ENV{ROCM_PATH} )
