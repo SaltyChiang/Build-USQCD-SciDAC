@@ -49,7 +49,7 @@ if !([ ${TARGET} == "cpu" ]); then
     git checkout .
     git checkout devel
     git pull
-    git checkout 82973e962
+    git checkout 7b5387349
     git submodule update --recursive
     popd
 

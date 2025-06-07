@@ -1,0 +1,16 @@
+diff --git a/include/kernels/reduce_init.cuh b/include/kernels/reduce_init.cuh
+index f5a130a38..6c9b4590c 100644
+--- a/include/kernels/reduce_init.cuh
++++ b/include/kernels/reduce_init.cuh
+@@ -1,6 +1,11 @@
+ #include <reduce_helper.h>
+ #include <kernel.h>
+ 
++__device__ inline void *operator new(size_t size, void *__ptr) { return __ptr; }
++__device__ inline void *operator new[](size_t size, void *__ptr) { return __ptr; }
++__device__ inline void operator delete(void *, void *) {}
++__device__ inline void operator delete[](void *, void *) {}
++
+ namespace quda {
+ 
+   namespace reducer {
