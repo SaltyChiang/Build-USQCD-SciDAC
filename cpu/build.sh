@@ -14,16 +14,16 @@ DST=${ROOT}/install
 
 function build() {
     if [ $1 -gt 0 ]; then
-        mkdir -p ${BIN}/$3
-        pushd ${BIN}/$3
+        mkdir -p ${BIN}/$2
+        pushd ${BIN}/$2
         if [ $1 -gt 1 ]; then
             rm -rf CMakeCache.txt
             if [ $1 -gt 2 ]; then
                 rm -rf ./*
             fi
-            ${@:4} && cmake --build . -j$2 && cmake --install .
+            ${@:3} && cmake --build . -j${JOBS} && cmake --install .
         else
-            cmake --build . -j$2 && cmake --install .
+            cmake --build . -j${JOBS} && cmake --install .
         fi
         popd
     fi
@@ -42,20 +42,20 @@ echo "BUILD_QDPXX=${BUILD_QDPXX}"
 echo "BUILD_CHROMA=${BUILD_CHROMA}"
 echo "CPU_ARCH=${CPU_ARCH}"
 
-build ${BUILD_QMP} ${JOBS} qmp \
+build ${BUILD_QMP} qmp \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
     -DQMP_MPI=ON \
     -DCMAKE_INSTALL_RPATH=${DST}/qmp/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
     -DCMAKE_INSTALL_PREFIX=${DST}/qmp ${SRC}/qmp
 
-build ${BUILD_QDPXX} ${JOBS} qdpxx \
+build ${BUILD_QDPXX} qdpxx \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
     -DQDP_USE_OPENMP=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP \
     -DCMAKE_INSTALL_RPATH=${DST}/qdpxx/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
     -DCMAKE_INSTALL_PREFIX=${DST}/qdpxx ${SRC}/qdpxx
 
-build ${BUILD_CHROMA} ${JOBS} chroma-${CPU_ARCH} \
+build ${BUILD_CHROMA} chroma-${CPU_ARCH} \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
     -DChroma_ENABLE_OPENMP=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX \
