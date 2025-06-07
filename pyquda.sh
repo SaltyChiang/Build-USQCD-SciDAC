@@ -15,7 +15,8 @@ pushd ${SCIDAC}
 
 git clone https://github.com/lattice/quda.git
 pushd quda
-git restore *
+git reset
+git checkout .
 git checkout develop
 git pull
 git checkout dca4b59a0

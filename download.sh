@@ -15,7 +15,8 @@ pushd ${SCIDAC}
 
 git clone https://github.com/usqcd-software/qmp.git
 pushd qmp
-git restore *
+git reset
+git checkout .
 git checkout master
 git pull
 git checkout 3010fef5b
@@ -23,7 +24,8 @@ popd
 
 git clone https://github.com/usqcd-software/qdpxx.git --recursive
 pushd qdpxx
-git restore *
+git reset
+git checkout .
 git checkout devel
 git pull
 git checkout 1d492ab61
@@ -32,7 +34,8 @@ popd
 
 git clone https://github.com/JeffersonLab/chroma.git --recursive
 pushd chroma
-git restore *
+git reset
+git checkout .
 git checkout devel
 git pull
 git checkout a761e7e03
@@ -42,7 +45,8 @@ popd
 if !([ ${TARGET} == "cpu" ]); then
     git clone https://github.com/JeffersonLab/qdp-jit.git --recursive
     pushd qdp-jit
-    git restore *
+    git reset
+    git checkout .
     git checkout devel
     git pull
     git checkout 82973e962
@@ -51,7 +55,8 @@ if !([ ${TARGET} == "cpu" ]); then
 
     git clone https://github.com/lattice/quda.git
     pushd quda
-    git restore *
+    git reset
+    git checkout .
     git checkout develop
     git pull
     git checkout dca4b59a0
