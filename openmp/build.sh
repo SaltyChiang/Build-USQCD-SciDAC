@@ -48,16 +48,16 @@ build ${BUILD_QMP} qmp \
     -DCMAKE_INSTALL_RPATH=${DST}/qmp/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
     -DCMAKE_INSTALL_PREFIX=${DST}/qmp ${SRC}/qmp
 
-build ${BUILD_QDPXX} qdpxx \
+build ${BUILD_QDPXX} qdpxx-openmp \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
     -DQDP_USE_OPENMP=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP \
     -DCMAKE_INSTALL_RPATH=${DST}/qdpxx/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
     -DCMAKE_INSTALL_PREFIX=${DST}/qdpxx ${SRC}/qdpxx
 
-build ${BUILD_CHROMA} chroma-${CPU_ARCH} \
+build ${BUILD_CHROMA} chroma-openmp \
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
     -DChroma_ENABLE_OPENMP=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX \
-    -DCMAKE_INSTALL_RPATH=${DST}/chroma-${CPU_ARCH}/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/chroma-${CPU_ARCH} ${SRC}/chroma
+    -DCMAKE_INSTALL_RPATH=${DST}/chroma-openmp/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
+    -DCMAKE_INSTALL_PREFIX=${DST}/chroma-openmp ${SRC}/chroma

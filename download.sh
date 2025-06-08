@@ -42,7 +42,7 @@ git checkout a761e7e03
 git submodule update --recursive
 popd
 
-if !([ ${TARGET} == "cpu" ]); then
+if !([ ${TARGET} == "openmp" ]); then
     git clone https://github.com/JeffersonLab/qdp-jit.git --recursive
     pushd qdp-jit
     git reset

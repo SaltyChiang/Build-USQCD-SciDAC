@@ -37,7 +37,7 @@ Download the source code anywhere you like:
 ./download.sh cuda
 ```
 
-`cuda` here is the target you want to run on. `cpu`, `cuda` and `dtk` are avaliable options now.
+`cuda` here is the target you want to run on. `openmp`, `cuda` and `dtk` are avaliable options now.
 
 The `download.sh` script will download, patch and archive the source code you need. Upload or move `scidac.tgz` to where you want and unarchive it. Then you can build the binary with `build.sh`:
 
@@ -58,6 +58,5 @@ GPU_ARCH=sm_70
 LLVM_VERSION=14
 ENABLE_QUDA=ON
 JOBS=32
-QUDA_JOBS=32
 OFFLINE=1
 ```
