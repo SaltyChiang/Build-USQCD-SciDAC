@@ -1,0 +1,56 @@
+diff --git a/cupy/_core/_routines_indexing.pyx b/cupy/_core/_routines_indexing.pyx
+index e399ef9c2..07b14e6fd 100644
+--- a/cupy/_core/_routines_indexing.pyx
++++ b/cupy/_core/_routines_indexing.pyx
+@@ -18,6 +18,7 @@ from cupy._core cimport _routines_math as _math
+ from cupy._core cimport _routines_manipulation as _manipulation
+ from cupy._core.core cimport _ndarray_base
+ from cupy._core cimport internal
++from cupy_backends.cuda.api cimport runtime
+ 
+ 
+ # _ndarray_base members
+@@ -86,7 +87,7 @@ cpdef _ndarray_base _ndarray_argwhere(_ndarray_base self):
+         else:
+             scan_dtype = numpy_int64
+ 
+-        chunk_size = 512
++        chunk_size = 256 if runtime._is_hip_environment else 512
+ 
+         # TODO(anaruse): Use Optuna to automatically tune the threshold
+         # that determines whether "incomplete scan" is enabled or not.
+diff --git a/cupy/_core/_routines_math.pyx b/cupy/_core/_routines_math.pyx
+index 440c8cbfa..ea0a2962f 100644
+--- a/cupy/_core/_routines_math.pyx
++++ b/cupy/_core/_routines_math.pyx
+@@ -433,7 +433,7 @@ def _cupy_scan_btree(op, chunk_size, warp_size=32):
+ 
+ cdef _ndarray_base scan(
+         _ndarray_base a, op, dtype=None, _ndarray_base out=None,
+-        incomplete=False, chunk_size=512):
++        incomplete=False, chunk_size=256 if runtime._is_hip_environment else 512):
+     """Return the prefix sum(scan) of the elements.
+ 
+     Args:
+@@ -649,7 +649,7 @@ cdef _ndarray_base _batch_scan_op(
+     batch_size = a.shape[1]
+     # TODO(ecastill) replace this with "_reduction._block_size" once it is
+     # properly exposed
+-    block_size = 512
++    block_size = 256 if runtime._is_hip_environment else 512
+     # Since we need to pad each batch we spawn more threads as some
+     # of them will be idle
+     # Calc the total number of blocks
+diff --git a/cupy_backends/cuda/api/_runtime_typedef.pxi b/cupy_backends/cuda/api/_runtime_typedef.pxi
+index 9560b8260..feb3f57de 100644
+--- a/cupy_backends/cuda/api/_runtime_typedef.pxi
++++ b/cupy_backends/cuda/api/_runtime_typedef.pxi
+@@ -344,7 +344,7 @@ cdef extern from *:
+                 int warpSize
+                 int maxThreadsPerBlock
+                 int maxThreadsDim[3]
+-                int maxGridSize[3]
++                unsigned int maxGridSize[3]
+                 int clockRate
+                 int memoryClockRate
+                 int memoryBusWidth
