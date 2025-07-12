@@ -22,3 +22,19 @@ index 8fff9a75a..e6f7dfd1b 100644
      set_runtime_error(error, __func__, __func__, __FILE__, __STRINGIFY__(__LINE__), activeTuning());
      return error == hipSuccess ? QUDA_SUCCESS : QUDA_ERROR;
    }
+diff --git a/include/targets/hip/target_device.h b/include/targets/hip/target_device.h
+index 8f3ad9315..610a1dd6b 100644
+--- a/include/targets/hip/target_device.h
++++ b/include/targets/hip/target_device.h
+@@ -145,11 +145,7 @@ namespace quda
+        architecture we are running on.
+     */
+     constexpr int warp_size() {
+-      #if defined(__GFX9__)
+       return 64;
+-      #else
+-      return 32;
+-      #endif
+     }
+ 
+     /**
