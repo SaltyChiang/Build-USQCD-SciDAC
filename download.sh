@@ -28,7 +28,7 @@ git reset
 git checkout .
 git checkout devel
 git pull
-git checkout 1d492ab61
+git checkout 2e2f1175f
 git submodule update --recursive
 popd
 
@@ -38,8 +38,17 @@ git reset
 git checkout .
 git checkout devel
 git pull
-git checkout a761e7e03
+git checkout 59e7dc055
 git submodule update --recursive
+popd
+
+git clone https://github.com/milc-qcd/milc_qcd.git
+pushd milc_qcd
+git reset
+git checkout .
+git checkout devel
+git pull
+git checkout 50cdbd0a8
 popd
 
 if !([ ${TARGET} == "openmp" ]); then
@@ -49,7 +58,7 @@ if !([ ${TARGET} == "openmp" ]); then
     git checkout .
     git checkout devel
     git pull
-    git checkout 7b5387349
+    git checkout 623ac6ad8
     git submodule update --recursive
     popd
 
@@ -59,7 +68,7 @@ if !([ ${TARGET} == "openmp" ]); then
     git checkout .
     git checkout develop
     git pull
-    git checkout 438441716
+    git checkout 08c6c016b
     popd
 
     if !([ -f CPM_0.40.2.cmake ] && [ "$(sha256sum CPM_0.40.2.cmake | awk '{print $1}')" == "c8cdc32c03816538ce22781ed72964dc864b2a34a310d3b7104812a5ca2d835d" ]); then
