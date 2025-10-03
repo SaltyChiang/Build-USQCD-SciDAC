@@ -27,7 +27,11 @@ function build() {
             if [ $1 -gt 2 ]; then
                 rm -rf ./*
             fi
-            ${@:3} && cmake --build . -j${JOBS} && cmake --install .
+            cmake -DCMAKE_INSTALL_PREFIX=${DST}/$2 ${SRC}/$3 \
+                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
+                -DCMAKE_INSTALL_RPATH=${DST}/$2/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
+                ${@:4} && \
+            cmake --build . -j${JOBS} && cmake --install .
         else
             cmake --build . -j${JOBS} && cmake --install .
         fi
@@ -54,12 +58,16 @@ function build_quda() {
                     cp ${ROOT}/e67c494cba7180066e73b9f6234d0b2129f1cdf5.tar.bz2 _deps/eigen-subbuild/eigen-populate-prefix/src
                 fi
             fi
-            ${@:3} -DQUDA_MULTIGRID=${QUDA_MULTIGRID} \
+            cmake -DCMAKE_INSTALL_PREFIX=${DST}/$2 ${SRC}/$3 \
+                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=${BUILD_SHAREDLIB} \
+                -DQUDA_GPU_ARCH=${GPU_ARCH} \
                 -DQUDA_CLOVER_DYNAMIC=OFF -DQUDA_CLOVER_RECONSTRUCT=OFF -DQUDA_DIRAC_DEFAULT_OFF=ON \
                 -DQUDA_DIRAC_WILSON=${QUDA_WILSON_CLOVER} -DQUDA_DIRAC_CLOVER=${QUDA_WILSON_CLOVER} \
                 -DQUDA_DIRAC_DOMAIN_WALL=${QUDA_DOMAIN_WALL} -DQUDA_DIRAC_STAGGERED=${QUDA_STAGGERED} \
                 -DQUDA_DIRAC_TWISTED_MASS=${QUDA_TWISTED} -DQUDA_DIRAC_TWISTED_CLOVER=${QUDA_TWISTED} \
-                -DQUDA_DIRAC_LAPLACE=${QUDA_LAPLACE_COVDEV} -DQUDA_DIRAC_COVDEV=${QUDA_LAPLACE_COVDEV} && \
+                -DQUDA_DIRAC_LAPLACE=${QUDA_LAPLACE_COVDEV} -DQUDA_DIRAC_COVDEV=${QUDA_LAPLACE_COVDEV} \
+                -DQUDA_MULTIGRID=${QUDA_MULTIGRID} \
+                ${@:4} && \
             cmake --build . -j${JOBS} && cmake --install .
         else
             cmake --build . -j${JOBS} && cmake --install .
@@ -80,8 +88,6 @@ QUDA_STAGGERED=OFF
 QUDA_TWISTED=OFF
 QUDA_LAPLACE_COVDEV=OFF
 QUDA_MULTIGRID=OFF
-
-export AMDGPU_TARGETS=${GPU_ARCH}
 
 if [ ${BUILD_CHROMA} -gt 0 ]; then
     BUILD_QMP=$((${BUILD_CHROMA} > ${BUILD_QMP} ? ${BUILD_CHROMA} : ${BUILD_QMP}))
@@ -109,12 +115,16 @@ if [ ${BUILD_MILC} -gt 0 ]; then
 fi
 
 if [ ${BUILD_PYQUDA} -gt 0 ]; then
+    BUILD_SHAREDLIB=ON
     QUDA_WILSON_CLOVER=ON
     QUDA_STAGGERED=ON
     QUDA_LAPLACE_COVDEV=ON
     QUDA_MULTIGRID=ON
 fi
 
+echo "BUILD_SHAREDLIB=${BUILD_SHAREDLIB}"
+echo "CPU_ARCH=${CPU_ARCH}"
+echo "GPU_ARCH=${GPU_ARCH}"
 echo "BUILD_QMP=${BUILD_QMP}"
 echo "BUILD_QDPXX=${BUILD_QDPXX}"
 echo "BUILD_QDP_JIT=${BUILD_QDP_JIT}"
@@ -124,59 +134,39 @@ echo "BUILD_CHROMA=${BUILD_CHROMA}"
 echo "BUILD_CHROMA_JIT=${BUILD_CHROMA_JIT}"
 echo "BUILD_MILC=${BUILD_MILC}"
 echo "BUILD_PYQUDA=${BUILD_PYQUDA}"
-echo "CPU_ARCH=${CPU_ARCH}"
-echo "GPU_ARCH=${GPU_ARCH}"
 
-build ${BUILD_QMP} qmp \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
-    -DQMP_MPI=ON \
-    -DCMAKE_INSTALL_RPATH=${DST}/qmp/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/qmp ${SRC}/qmp
+export AMDGPU_TARGETS=${GPU_ARCH}
 
-build ${BUILD_QDPXX} qdpxx \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP \
-    -DCMAKE_INSTALL_RPATH=${DST}/qdpxx/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/qdpxx ${SRC}/qdpxx
+build ${BUILD_QMP} qmp qmp \
+    -DQMP_MPI=ON
 
-build_quda ${BUILD_QUDA} quda-${GPU_ARCH} \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=${BUILD_SHAREDLIB} \
-    -DQUDA_GPU_ARCH=${GPU_ARCH} -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
+build ${BUILD_QDPXX} qdpxx qdpxx \
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP
+
+build_quda ${BUILD_QUDA} quda-${GPU_ARCH} quda \
+    -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
     -DQUDA_QMP=ON -DQUDA_QIO=ON \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdpxx/lib/cmake/QIO \
-    -DCMAKE_INSTALL_PREFIX=${DST}/quda-${GPU_ARCH} ${SRC}/quda
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdpxx/lib/cmake/QIO
 
-build ${BUILD_CHROMA} chroma \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX \
-    -DCMAKE_INSTALL_RPATH=${DST}/chroma/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/chroma ${SRC}/chroma
+build ${BUILD_CHROMA} chroma-${GPU_ARCH} chroma \
+    -DChroma_ENABLE_QUDA=ON \
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-${GPU_ARCH}/lib/cmake/QUDA
 
-build ${BUILD_QDP_JIT} qdp-jit \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
+build ${BUILD_QDP_JIT} qdp-jit qdp-jit \
     -DQDP_ENABLE_BACKEND=ROCM \
     -DQDP_ENABLE_LLVM${LLVM_VERSION}=ON \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP \
-    -DCMAKE_INSTALL_RPATH=${DST}/qdp-jit/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/qdp-jit ${SRC}/qdp-jit
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP
 
-build_quda ${BUILD_QUDA_JIT} quda-jit-${GPU_ARCH} \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=${BUILD_SHAREDLIB} \
-    -DQUDA_GPU_ARCH=${GPU_ARCH} -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
+build_quda ${BUILD_QUDA_JIT} quda-jit-${GPU_ARCH} quda \
+    -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
     -DQUDA_QMP=ON -DQUDA_QIO=ON -DQUDA_QDPJIT=ON -DQUDA_INTERFACE_QDPJIT=ON -DQUDA_BUILD_ALL_TESTS=OFF \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdp-jit/lib/cmake/QIO -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX \
-    -DCMAKE_INSTALL_PREFIX=${DST}/quda-jit-${GPU_ARCH} ${SRC}/quda
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdp-jit/lib/cmake/QIO -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX
 
-build ${BUILD_CHROMA_JIT} chroma-jit-${GPU_ARCH} \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
+build ${BUILD_CHROMA_JIT} chroma-jit-${GPU_ARCH} chroma \
     -DChroma_ENABLE_JIT_CLOVER=ON -DChroma_ENABLE_QUDA=ON \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-jit-${GPU_ARCH}/lib/cmake/QUDA \
-    -DCMAKE_INSTALL_RPATH=${DST}/chroma-jit-${GPU_ARCH}/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
-    -DCMAKE_INSTALL_PREFIX=${DST}/chroma-jit-${GPU_ARCH} ${SRC}/chroma
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-jit-${GPU_ARCH}/lib/cmake/QUDA
 
-build_quda ${BUILD_PYQUDA} pyquda-${GPU_ARCH} \
-    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=ON \
-    -DQUDA_GPU_ARCH=${GPU_ARCH} -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
-    -DQUDA_MPI=ON \
-    -DCMAKE_INSTALL_PREFIX=${DST}/pyquda-${GPU_ARCH} ${SRC}/quda
+build_quda ${BUILD_PYQUDA} pyquda-${GPU_ARCH} quda \
+    -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
+    -DQUDA_MPI=ON
     # -DQUDA_MULTIGRID_NVEC_LIST="6,24,32,64,96" \
