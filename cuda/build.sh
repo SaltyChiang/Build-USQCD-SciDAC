@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-BUILD_SHAREDLIB=ON
+SHARED_LIBS=ON
 CPU_ARCH=x86_64
 GPU_ARCH=sm_60
 LLVM_VERSION=14
@@ -28,7 +28,7 @@ function build() {
                 rm -rf ./*
             fi
             cmake -DCMAKE_INSTALL_PREFIX=${DST}/$2 ${SRC}/$3 \
-                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
+                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${SHARED_LIBS} \
                 -DCMAKE_INSTALL_RPATH=${DST}/$2/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
                 ${@:4} && \
             cmake --build . -j${JOBS} && cmake --install .
@@ -59,7 +59,7 @@ function build_quda() {
                 fi
             fi
             cmake -DCMAKE_INSTALL_PREFIX=${DST}/$2 ${SRC}/$3 \
-                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=${BUILD_SHAREDLIB} \
+                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RELEASE -DQUDA_BUILD_SHAREDLIB=${SHARED_LIBS} \
                 -DQUDA_GPU_ARCH=${GPU_ARCH} \
                 -DQUDA_CLOVER_DYNAMIC=OFF -DQUDA_CLOVER_RECONSTRUCT=OFF -DQUDA_DIRAC_DEFAULT_OFF=ON \
                 -DQUDA_DIRAC_WILSON=${QUDA_WILSON_CLOVER} -DQUDA_DIRAC_CLOVER=${QUDA_WILSON_CLOVER} \
@@ -115,14 +115,14 @@ if [ ${BUILD_MILC} -gt 0 ]; then
 fi
 
 if [ ${BUILD_PYQUDA} -gt 0 ]; then
-    BUILD_SHAREDLIB=ON
+    SHARED_LIBS=ON
     QUDA_WILSON_CLOVER=ON
     QUDA_STAGGERED=ON
     QUDA_LAPLACE_COVDEV=ON
     QUDA_MULTIGRID=ON
 fi
 
-echo "BUILD_SHAREDLIB=${BUILD_SHAREDLIB}"
+echo "SHARED_LIBS=${SHARED_LIBS}"
 echo "CPU_ARCH=${CPU_ARCH}"
 echo "GPU_ARCH=${GPU_ARCH}"
 echo "BUILD_QMP=${BUILD_QMP}"

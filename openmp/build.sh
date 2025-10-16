@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-BUILD_SHAREDLIB=ON
+SHARED_LIBS=ON
 CPU_ARCH=x86_64
 JOBS=32
 
@@ -22,7 +22,7 @@ function build() {
                 rm -rf ./*
             fi
             cmake -DCMAKE_INSTALL_PREFIX=${DST}/$2 ${SRC}/$3 \
-                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHAREDLIB} \
+                -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${SHARED_LIBS} \
                 -DCMAKE_INSTALL_RPATH=${DST}/$2/lib -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=True \
                 ${@:4} && \
         else
@@ -40,19 +40,25 @@ if [ ${BUILD_CHROMA} -gt 0 ]; then
     BUILD_QDPXX=$((${BUILD_CHROMA} > ${BUILD_QDPXX} ? ${BUILD_CHROMA} : ${BUILD_QDPXX}))
 fi
 
-echo "BUILD_SHAREDLIB=${BUILD_SHAREDLIB}"
+echo "SHARED_LIBS=${SHARED_LIBS}"
 echo "CPU_ARCH=${CPU_ARCH}"
 echo "BUILD_QMP=${BUILD_QMP}"
 echo "BUILD_QDPXX=${BUILD_QDPXX}"
 echo "BUILD_CHROMA=${BUILD_CHROMA}"
 
-build ${BUILD_QMP} qmp \
+build ${BUILD_QMP} qmp qmp \
     -DQMP_MPI=ON \
 
-build ${BUILD_QDPXX} qdpxx-openmp \
+build ${BUILD_QDPXX} qdpxx qdpxx \
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP \
+
+build ${BUILD_CHROMA} chroma chroma \
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX \
+
+build ${BUILD_QDPXX} qdpxx-openmp qdpxx \
     -DQDP_USE_OPENMP=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP \
 
-build ${BUILD_CHROMA} chroma-openmp \
+build ${BUILD_CHROMA} chroma-openmp chroma \
     -DChroma_ENABLE_OPENMP=ON \
-    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX \
+    -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx-openmp/lib/cmake/QDPXX \
