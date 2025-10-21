@@ -11,8 +11,11 @@ module load compiler/dtk/25.04
 export ROCM_HOME=${ROCM_PATH}
 export CUPY_INSTALL_USE_HIP=1
 export HCC_AMDGPU_TARGET=gfx906
+export AMDGPU_TARGETS=gfx906
 
 export CC=clang
 export CXX=clang++
+export HIPCC=dcc
 export CFLAGS="-Wno-return-type -Wno-inconsistent-missing-override"
 export CXXFLAGS="-Wno-return-type -Wno-inconsistent-missing-override"
+export HIPFLAGS="-Wno-return-type -Wno-inconsistent-missing-override"
