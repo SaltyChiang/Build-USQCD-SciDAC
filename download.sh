@@ -38,7 +38,7 @@ git reset
 git checkout .
 git checkout devel
 git pull
-git checkout 59e7dc055
+git checkout 73f8ec45d
 git submodule update --recursive
 popd
 
@@ -46,7 +46,7 @@ git clone https://github.com/milc-qcd/milc_qcd.git
 pushd milc_qcd
 git reset
 git checkout .
-git checkout devel
+git checkout develop
 git pull
 git checkout 50cdbd0a8
 popd
