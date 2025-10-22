@@ -1,24 +1,19 @@
 #!/usr/bin/env bash
 
-ROOT=$(cd $(dirname ${BASH_SOURCE[0]:-${(%):-%x}}) && pwd)
-SRC=${ROOT}
-BIN=${ROOT}/build
-DST=${ROOT}/install
-
 function mkdir_cp_sha256() {
-    _DIR=$1
-    _FILE=$2
-    _SHA256=$3
-    if !([ -f ${_DIR}/${_FILE} ] && [ "$(sha256sum ${_DIR}/${_FILE} | awk '{print $1}')" == "${_SHA256}" ]); then
-        mkdir -p ${_DIR}
-        cp ${ROOT}/${_FILE} ${_DIR}
+    # mkdir_cp_sha256 FILE DIR SHA256
+    if !([ -f $2/$1 ] && [ "$(sha256sum $2/$1 | awk '{print $1}')" == "$3" ]); then
+        mkdir -p $2
+        cp ${SRC}/$1 $2
     fi
 }
 
 function build() {
+    # build LEVEL DIR SRC [CMAKE_OPTIONS...]
     if [ $1 -gt 0 ]; then
         mkdir -p ${BIN}/$2
-        pushd ${BIN}/$2
+        echo "Enter ${BIN}/$2 (build)"
+        cd ${BIN}/$2
         if [ $1 -gt 1 ]; then
             rm -rf CMakeCache.txt
             if [ $1 -gt 2 ]; then
@@ -32,27 +27,28 @@ function build() {
         else
             cmake --build . -j${JOBS} && cmake --install .
         fi
-        popd
+        echo "Leave ${BIN}/$2 (build)"
+        cd -
     fi
 }
 
 function build_quda() {
+    # build_quda LEVEL DIR SRC [CMAKE_OPTIONS...]
     if [ $1 -gt 0 ]; then
         mkdir -p ${BIN}/$2
-        pushd ${BIN}/$2
+        echo "Enter ${BIN}/$2 (build_quda)"
+        cd ${BIN}/$2
         if [ $1 -gt 1 ]; then
             rm -rf CMakeCache.txt
             if [ $1 -gt 2 ]; then
                 rm -rf ./*
             fi
             if [ ${OFFLINE} -gt 0 ]; then
-                mkdir_cp_sha256 \
+                mkdir_cp_sha256 CPM_0.40.2.cmake \
                     cmake \
-                    CPM_0.40.2.cmake \
                     c8cdc32c03816538ce22781ed72964dc864b2a34a310d3b7104812a5ca2d835d
-                mkdir_cp_sha256 \
+                mkdir_cp_sha256 e67c494cba7180066e73b9f6234d0b2129f1cdf5.tar.bz2 \
                     _deps/eigen-subbuild/eigen-populate-prefix/src \
-                    e67c494cba7180066e73b9f6234d0b2129f1cdf5.tar.bz2 \
                     98d244932291506b75c4ae7459af29b1112ea3d2f04660686a925d9ef6634583
             fi
             cmake -DCMAKE_INSTALL_PREFIX=${DST}/$2 ${SRC}/$3 \
@@ -69,7 +65,8 @@ function build_quda() {
         else
             cmake --build . -j${JOBS} && cmake --install .
         fi
-        popd
+        echo "Leave ${BIN}/$2 (build_quda)"
+        cd -
     fi
 }
 

@@ -13,7 +13,12 @@ BUILD_CHROMA_JIT=2
 BUILD_MILC=2
 BUILD_PYQUDA=2
 
-source ./common.sh
+ROOT=$(cd $(dirname ${BASH_SOURCE[0]:-${(%):-%x}}) && pwd)
+SRC=${ROOT}
+BIN=${ROOT}/build
+DST=${ROOT}/install
+
+source ${SRC}/build_common.sh
 
 build ${BUILD_QMP} qmp qmp \
     -DQMP_MPI=ON
