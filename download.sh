@@ -39,12 +39,12 @@ if !([ $1 == "openmp" ]); then
     git_checkout qdp-jit \
         https://github.com/JeffersonLab/qdp-jit.git \
         devel \
-        623ac6ad8
+        f7469b155
 
     git_checkout quda \
         https://github.com/lattice/quda.git \
         develop \
-        e9977c0c2
+        7d579d290
 
     wget_sha256 CPM_0.40.2.cmake \
         https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.2/CPM.cmake \
