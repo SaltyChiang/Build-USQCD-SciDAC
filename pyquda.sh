@@ -18,7 +18,7 @@ cp ${SCRIPT}/build_common.sh ${SRC}/
 git_checkout quda \
     https://github.com/lattice/quda.git \
     develop \
-    7d579d290
+    7d579d290e8722537b10332249da3a6d82deb7c5
 
 wget_sha256 CPM_0.40.2.cmake \
     https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.2/CPM.cmake \

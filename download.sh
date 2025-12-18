@@ -18,33 +18,33 @@ cp ${SCRIPT}/build_common.sh ${SRC}/
 git_checkout qmp \
     https://github.com/usqcd-software/qmp.git \
     master \
-    3010fef5b
+    3010fef5b5784b3e6eeec9fff38cb9954a28ad42
 
 git_checkout qdpxx \
     https://github.com/usqcd-software/qdpxx.git \
     devel \
-    2e2f1175f
+    2e2f1175ffdb0c15dd50ba8dd6816f5761469c9c
 
 git_checkout chroma \
     https://github.com/JeffersonLab/chroma.git \
     devel \
-    14151478e
+    14151478e394d9c9d957ad9e4a4c3d7714e80913
 
 git_checkout milc_qcd \
     https://github.com/milc-qcd/milc_qcd.git \
     develop \
-    50cdbd0a8
+    50cdbd0a8afb993cbff7be7c742db9ac4e313fe7
 
 if !([ $1 == "openmp" ]); then
     git_checkout qdp-jit \
         https://github.com/JeffersonLab/qdp-jit.git \
         devel \
-        f7469b155
+        f7469b1558811cb4905f670f996827de3c5c0b68
 
     git_checkout quda \
         https://github.com/lattice/quda.git \
         develop \
-        7d579d290
+        7d579d290e8722537b10332249da3a6d82deb7c5
 
     wget_sha256 CPM_0.40.2.cmake \
         https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.2/CPM.cmake \
