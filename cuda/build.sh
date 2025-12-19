@@ -46,6 +46,6 @@ build ${BUILD_CHROMA_JIT} chroma-jit-${GPU_ARCH} chroma \
     -DChroma_ENABLE_JIT_CLOVER=ON -DChroma_ENABLE_QUDA=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-jit-${GPU_ARCH}/lib/cmake/QUDA
 
-build_quda ${BUILD_PYQUDA} pyquda-${GPU_ARCH} quda \
+build_quda ${BUILD_QUDA_MPI} quda-mpi-${GPU_ARCH} quda \
     -DQUDA_MPI=ON
     # -DQUDA_MULTIGRID_NVEC_LIST="6,24,32,64,96" \
