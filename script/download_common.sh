@@ -38,7 +38,7 @@ function git_apply() {
 
 function wget_sha256() {
     # wget_sha256 FILE URL SHA256
-    if !([ -f ${SRC}/$1 ] && [ "$(sha256sum ${SRC}/$1 | awk '{print $1}')" == "$3" ]); then
+    if ! { [ -f ${SRC}/$1 ] && [ "$(sha256sum ${SRC}/$1 | awk '{print $1}')" == "$3" ]; }; then
         wget $2 -O ${SRC}/$1
     fi
 }

@@ -23,19 +23,19 @@ git_checkout qmp \
 git_checkout qdpxx \
     https://github.com/usqcd-software/qdpxx.git \
     devel \
-    2e2f1175ffdb0c15dd50ba8dd6816f5761469c9c
+    6d1db4e60adbf6f873d337c1c3420b4f9796ecd5
 
 git_checkout chroma \
     https://github.com/JeffersonLab/chroma.git \
     devel \
-    14151478e394d9c9d957ad9e4a4c3d7714e80913
+    a761e7e03e50bbec74d43a8a3c096e0d04fcb8e5
 
 git_checkout milc_qcd \
     https://github.com/milc-qcd/milc_qcd.git \
     develop \
-    50cdbd0a8afb993cbff7be7c742db9ac4e313fe7
+    37fb728e94ba109972210a15cf165c2c50905d59
 
-if !([ $1 == "openmp" ]); then
+if ! [ $1 == "openmp" ]; then
     git_checkout qdp-jit \
         https://github.com/JeffersonLab/qdp-jit.git \
         devel \

@@ -2,7 +2,7 @@
 
 function mkdir_cp_sha256() {
     # mkdir_cp_sha256 FILE DIR SHA256
-    if !([ -f $2/$1 ] && [ "$(sha256sum $2/$1 | awk '{print $1}')" == "$3" ]); then
+    if ! { [ -f $2/$1 ] && [ "$(sha256sum $2/$1 | awk '{print $1}')" == "$3" ]; }; then
         mkdir -p $2
         cp ${SRC}/$1 $2
     fi
