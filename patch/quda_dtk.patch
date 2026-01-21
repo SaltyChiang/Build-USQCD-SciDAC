@@ -1,11 +1,11 @@
 diff --git a/lib/targets/hip/quda_api.cpp b/lib/targets/hip/quda_api.cpp
-index 8fff9a75a..e6f7dfd1b 100644
+index 90029260c..429a00810 100644
 --- a/lib/targets/hip/quda_api.cpp
 +++ b/lib/targets/hip/quda_api.cpp
-@@ -125,9 +125,16 @@ namespace quda
-   qudaError_t qudaLaunchKernel(const void *func, const TuneParam &tp, const qudaStream_t &stream, const void *arg)
+@@ -126,9 +126,16 @@ namespace quda
+   qudaError_t qudaLaunchKernel(const kernel_t &kernel, const TuneParam &tp, const qudaStream_t &stream, const void *arg)
    {
-     // no driver API variant here since we have C++ functions
+     auto func = kernel.func;
 -    void *args[] = {const_cast<void *>(arg)};
 -    PROFILE(hipError_t error = hipLaunchKernel(func, tp.grid, tp.block, args, tp.shared_bytes, get_stream(stream)),
 -            QUDA_PROFILE_LAUNCH_KERNEL);
@@ -19,6 +19,6 @@ index 8fff9a75a..e6f7dfd1b 100644
 +      PROFILE(error = hipLaunchKernel(func, tp.grid, tp.block, args, tp.shared_bytes, get_stream(stream)),
 +              QUDA_PROFILE_LAUNCH_KERNEL);
 +    }
-     set_runtime_error(error, __func__, __func__, __FILE__, __STRINGIFY__(__LINE__), activeTuning());
+     set_runtime_error(error, __func__, kernel.name.c_str(), __FILE__, __STRINGIFY__(__LINE__), activeTuning());
      return error == hipSuccess ? QUDA_SUCCESS : QUDA_ERROR;
    }
