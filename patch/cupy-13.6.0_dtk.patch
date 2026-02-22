@@ -42,10 +42,10 @@ index 440c8cbfa..ea0a2962f 100644
      # of them will be idle
      # Calc the total number of blocks
 diff --git a/cupy_backends/cuda/api/_runtime_typedef.pxi b/cupy_backends/cuda/api/_runtime_typedef.pxi
-index 6b62d31b2..83d198b9a 100644
+index 7e815823b..f961cb120 100644
 --- a/cupy_backends/cuda/api/_runtime_typedef.pxi
 +++ b/cupy_backends/cuda/api/_runtime_typedef.pxi
-@@ -351,7 +351,7 @@ cdef extern from *:
+@@ -546,7 +546,7 @@ cdef extern from *:
                  int warpSize
                  int maxThreadsPerBlock
                  int maxThreadsDim[3]
@@ -55,10 +55,10 @@ index 6b62d31b2..83d198b9a 100644
                  int memoryClockRate
                  int memoryBusWidth
 diff --git a/cupy_backends/cuda/libs/_cnvrtc.pxi b/cupy_backends/cuda/libs/_cnvrtc.pxi
-index c2aa55f56..6bff1343e 100644
+index 1528fe416..d23dd2f9e 100644
 --- a/cupy_backends/cuda/libs/_cnvrtc.pxi
 +++ b/cupy_backends/cuda/libs/_cnvrtc.pxi
-@@ -142,6 +142,6 @@ cdef SoftLink _get_softlink():
+@@ -148,6 +148,6 @@ cdef SoftLink _get_softlink():
              libname = 'libamdhip64.so.5'
          elif runtime_version < 7_00_00000:
              # ROCm 6.x
