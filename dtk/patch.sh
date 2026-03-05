@@ -5,5 +5,4 @@ git_apply qdp-jit \
 
 git_apply quda \
     ${PATCH}/quda_cmake.patch \
-    ${PATCH}/quda_dtk.patch \
-    ${PATCH}/quda_devtoolset-7.patch
+    ${PATCH}/quda_dtk.patch
