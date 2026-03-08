@@ -2,8 +2,9 @@
 
 SHARED_LIBS=ON
 CPU_ARCH=x86_64
-GPU_ARCH=gfx906
-LLVM_VERSION=17
+# GPU_ARCH=12_60_7
+GPU_ARCH=pvc
+LLVM_VERSION=21
 OFFLINE=1
 JOBS=$(nproc)
 
@@ -20,7 +21,8 @@ DST=${ROOT}/install
 
 source ${SRC}/build_common.sh
 
-export AMDGPU_TARGETS=${GPU_ARCH}
+# Override the default SYCL link flags.
+export SYCL_LINK_FLAGS="-fsycl-device-code-split=per_kernel -fsycl-max-parallel-link-jobs=32 -flink-huge-device-code -ftarget-register-alloc-mode=pvc:large"
 
 build ${BUILD_QMP} qmp qmp \
     -DQMP_MPI=ON
@@ -29,7 +31,7 @@ build ${BUILD_QDPXX} qdpxx qdpxx \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP
 
 build_quda ${BUILD_QUDA} quda-${GPU_ARCH} quda \
-    -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
+    -DQUDA_TARGET_TYPE=SYCL -DQUDA_SYCL_TARGETS=intel_gpu_${GPU_ARCH} \
     -DQUDA_QMP=ON -DQUDA_QIO=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdpxx/lib/cmake/QIO
 
@@ -38,12 +40,12 @@ build ${BUILD_CHROMA} chroma-${GPU_ARCH} chroma \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdpxx/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-${GPU_ARCH}/lib/cmake/QUDA
 
 build ${BUILD_QDP_JIT} qdp-jit qdp-jit \
-    -DQDP_ENABLE_BACKEND=ROCM \
+    -DQDP_ENABLE_BACKEND=L0 \
     -DQDP_ENABLE_LLVM${LLVM_VERSION}=ON \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP
 
 build_quda ${BUILD_QUDA_JIT} quda-jit-${GPU_ARCH} quda \
-    -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
+    -DQUDA_TARGET_TYPE=SYCL -DQUDA_SYCL_TARGETS=intel_gpu_${GPU_ARCH} \
     -DQUDA_QMP=ON -DQUDA_QIO=ON -DQUDA_QDPJIT=ON -DQUDA_INTERFACE_QDPJIT=ON -DQUDA_BUILD_ALL_TESTS=OFF \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQIO_DIR=${DST}/qdp-jit/lib/cmake/QIO -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX
 
@@ -52,6 +54,6 @@ build ${BUILD_CHROMA_JIT} chroma-jit-${GPU_ARCH} chroma \
     -DQMP_DIR=${DST}/qmp/lib/cmake/QMP -DQDPXX_DIR=${DST}/qdp-jit/lib/cmake/QDPXX -DQUDA_DIR=${DST}/quda-jit-${GPU_ARCH}/lib/cmake/QUDA
 
 build_quda ${BUILD_QUDA_MPI} quda-mpi-${GPU_ARCH} quda \
-    -DQUDA_TARGET_TYPE=HIP -DQUDA_MAX_KERNEL_ARG_SIZE=0 \
+    -DQUDA_TARGET_TYPE=SYCL -DQUDA_SYCL_TARGETS=intel_gpu_${GPU_ARCH} \
     -DQUDA_MPI=ON
     # -DQUDA_MULTIGRID_NVEC_LIST="6,24,32,64,96" \
