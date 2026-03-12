@@ -28,12 +28,12 @@ git_checkout qdpxx \
 git_checkout chroma \
     https://github.com/JeffersonLab/chroma.git \
     devel \
-    a31eea848d88d31ffed91494d2b0c9327cccd85f
+    71ed3c2debc963641999abe6d40bb2532ba4e249
 
 git_checkout milc_qcd \
     https://github.com/milc-qcd/milc_qcd.git \
     develop \
-    64727e9ddc6b30a37e8c0db8a2e6f40fd89a0bbb
+    26cfab368a02ffb34c2945207c8ed1b17e247d36
 
 if ! [ $1 == "openmp" ]; then
     git_checkout qdp-jit \
@@ -44,7 +44,7 @@ if ! [ $1 == "openmp" ]; then
     git_checkout quda \
         https://github.com/lattice/quda.git \
         develop \
-        e318708117360dc09c1f0808615bee93ef372aae
+        d53085b183529e0d5c1bec9be5113575019e7efa
 
     wget_sha256 CPM_0.40.2.cmake \
         https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.2/CPM.cmake \
