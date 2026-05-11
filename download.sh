@@ -7,7 +7,7 @@ SCRIPT=${ROOT}/script
 PATCH=${ROOT}/patch
 
 if [ -z $TARGET ]; then
-    echo "Error: Empty or invalid TARGET (could be \"cuda\" or \"dtk\")"
+    echo "Error: Empty or invalid TARGET (could be \"cuda\", \"dtk\" or \"sycl\")"
     echo "Usage: download.sh TARGET"
     exit 1
 fi
