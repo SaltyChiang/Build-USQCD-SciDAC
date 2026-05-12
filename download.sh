@@ -44,7 +44,7 @@ if ! [ $1 == "openmp" ]; then
     git_checkout quda \
         https://github.com/lattice/quda.git \
         develop \
-        9d98797464cbf1aed55d2daeb17677a656064ea4
+        6aa7fcc94d832d7a788adc8c22788b15182b8304
 
     wget_sha256 CPM_0.40.2.cmake \
         https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.2/CPM.cmake \
