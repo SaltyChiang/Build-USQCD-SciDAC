@@ -18,7 +18,7 @@ cp ${SCRIPT}/build_common.sh ${SRC}/
 git_checkout quda \
     https://github.com/lattice/quda.git \
     feature/sycl \
-    ff4879bad43625eff87e516e7579dbb9500e5d4d
+    027f3ecb6b68540b9d4b533699470f3e326a0fab
 
 wget_sha256 CPM_0.40.2.cmake \
     https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.2/CPM.cmake \
